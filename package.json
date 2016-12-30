@@ -1,0 +1,16 @@
+{
+  "name": "extjsmodelgenerator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "model-gen.js",
+  "dependencies": {
+    "mysql": "^2.12.0",
+    "promise": "^7.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
