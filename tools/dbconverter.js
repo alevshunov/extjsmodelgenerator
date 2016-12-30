@@ -46,7 +46,7 @@ DbMeta.prototype = {
             var tableNameFieldName;
 
             pool.query('show tables')
-                .on('error', function(err){ reject(err); })
+                .on('error', reject)
                 .on('fields', function(fields) { tableNameFieldName = fields[0].name; })
                 .on('result', function(data) {
                     var tableName = data[tableNameFieldName];
@@ -64,6 +64,31 @@ DbMeta.prototype = {
                     me._loadTables().then(resolve, reject);
                 });
         })
+    },
+
+    _loadTables: function() {
+        var me = this;
+        return new Promise(function(resolve, reject) {
+            loadNextTable();
+
+            function loadNextTable(index) {
+                index = index || 0;
+
+                if (index == me.tables.length) {
+                    Logger.log('All tables parsed.');
+                    resolve();
+                    return;
+                }
+
+                var tableToLoad = me.tables[index];
+                Logger.log('Preparing to parse table: ' + tableToLoad.name);
+                tableToLoad.load()
+                    .then(function() {
+                        Logger.log('NEXT');
+                        loadNextTable(index+1);
+                    }, reject);
+            }
+        });
     },
 
     dump: function (options) {
@@ -103,31 +128,6 @@ DbMeta.prototype = {
                     }, reject);
             }
         });
-    },
-
-    _loadTables: function() {
-        var me = this;
-        return new Promise(function(resolve, reject) {
-            loadNextTable();
-
-            function loadNextTable(index) {
-                index = index || 0;
-
-                if (index == me.tables.length) {
-                    Logger.log('All tables parsed.');
-                    resolve();
-                    return;
-                }
-
-                var tableToLoad = me.tables[index];
-                Logger.log('Preparing to parse table: ' + tableToLoad.name);
-                tableToLoad.load()
-                    .then(function() {
-                        Logger.log('NEXT');
-                        loadNextTable(index+1);
-                    }, reject);
-            }
-        });
     }
 };
 
@@ -152,9 +152,7 @@ TableMeta.prototype = {
                 .on('result', function(data) {
                     me.fields.push(new FieldMeta().parse(data));
                 })
-                .on('end', function() {
-                    resolve();
-                });
+                .on('end', resolve);
         });
     },
 

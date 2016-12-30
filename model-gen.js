@@ -12,7 +12,7 @@ var dumpArgs = {
 };
 
 magic
-    .load(cfg.get('name'))
+    .load(cfg.get('-d'))
     .then(function(data) {
         return data.dump(dumpArgs);
     }, errorHandler)
