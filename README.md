@@ -19,4 +19,4 @@ Arguments:
 * Regenerate enduser models (default false): -im true
 
 Usage:
-    node model-gen.js -d myapp -n AppName.model -b AppName.model.base.BaseModel -tm true
+    node model-gen.js -d myapp -n AppName.model -b AppName.model.base.BaseModel -im true
